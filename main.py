@@ -7,15 +7,17 @@ class ImageEditor:
     def __init__(self, root):
         self.root = root
         self.root.title("Image Editing App (Kelompok 10)")
-        self.root.geomatry("1920x1080")
+        self.root.geometry("1920x1080")
         self.root.configure(bg="#e6f7ff")
         
         self.original_img = None
         self.image = None
         self.image_tk = None
 
+        self.create_widgets()
+
     def load_img(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif")])
+        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.gif")])
 
         if file_path:
             self.original_img = Image.open(file_path)
@@ -28,9 +30,9 @@ class ImageEditor:
         
         aspect_ratio = self.image.width / self.image.height
         new_width = 600
-        new_height = int(new_height/aspect_ratio)
+        new_height = int(new_width/aspect_ratio)
 
-        self.image_tk = ImageTk.PhotoImage(self.image.resize((new_width, new_height, Image.LANCZ0S)))
+        self.image_tk = ImageTk.PhotoImage(self.image.resize((new_width, new_height), Image.LANCZOS))
         self.image_label.config(image=self.image_tk)
 
     def apply_filter(self, filter_type):
@@ -52,4 +54,60 @@ class ImageEditor:
                 messagebox.showinfo("Succes", "Image Saved")
 
     def create_widgets(self):
-        self.load_btn = tk.Button(self.root)
+        self.load_btn = tk.Button(self.root, text="Load Image", command=self.load_img, bg="#007bff", fg="white", font=("Arial", 12), padx=10, pady=5)
+
+        self.load_btn.pack(pady=10)
+
+        self.image_label = tk.Label(self.root, bg="#e6f7ff")
+        self.image_label.pack(pady=10)
+
+        self.filters_frame = tk.Frame(self.root, bg="#e6f7ff")
+        self.filters_frame.pack(pady=10)
+
+        filters = [
+            ("Blur", ImageFilter.BLUR),
+            ("Countour", ImageFilter.CONTOUR),
+            ("Edge Enchance", ImageFilter.EDGE_ENHANCE),
+            ("Emboss", ImageFilter.EMBOSS),
+            ("Sharpen", ImageFilter.SHARPEN),
+            ("Smooth", ImageFilter.SMOOTH)
+        ]
+
+        for filter_name, filter_type in filters:
+            tk.Button(self.filters_frame, 
+                      text=filter_name,
+                      command=lambda ft=filter_type: self.apply_filter(ft),
+                      bg="#007bff", 
+                      fg="white", 
+                      font=("Arial", 10), 
+                      padx=10, pady=5).pack(side="left", padx=10, pady=5)
+            
+        self.buttons_frame = tk.Frame(self.root, bg="#e6f7ff")
+        self.buttons_frame.pack(pady=20)
+
+        self.reset_button = tk.Button(self.buttons_frame, 
+                                      text = "Reset Image", 
+                                      command = self.reset, 
+                                      bg = "#28a745", 
+                                      fg="white", 
+                                      font=("Arial", 10), 
+                                      padx=10, 
+                                      pady=5)
+        self.reset_button.pack(side="left", padx=10)
+
+        self.save_button = tk.Button(self.buttons_frame, 
+                                      text = "Save Image", 
+                                      command = self.save, 
+                                      bg = "#28a745", 
+                                      fg="white", 
+                                      font=("Arial", 10), 
+                                      padx=10, 
+                                      pady=5)
+        self.save_button.pack(side="left", padx=10)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ImageEditor(root)
+    root.mainloop()
+        
+
