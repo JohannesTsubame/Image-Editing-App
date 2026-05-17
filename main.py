@@ -1,14 +1,16 @@
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from PIL import Image, ImageTk, ImageFilter
+from PIL import Image, ImageTk, ImageFilter, ImageColor, ImageOps
+import modules.color as color
+import modules.rotate as rotate
 
 class ImageEditor:
     def __init__(self, root):
         self.root = root
         self.root.title("Image Editing App (Kelompok 10)")
         self.root.geometry("1920x1080")
-        self.root.configure(bg="#e6f7ff")
+        self.root.configure(bg="#5a5a5a")
         
         self.original_img = None
         self.image = None
@@ -40,6 +42,23 @@ class ImageEditor:
             self.image = self.image.filter(filter_type)
             self.display_img()
 
+    def grayscale(self):
+        if self.image:
+            self.image = color.grey_scale(self.image)
+            self.display_img()
+    
+    def apply_rotate(self, value):
+        if self.image:
+
+            try:
+                value = int(value)
+            except ValueError:
+                messagebox.showerror("Error", "Invalid rotation angle")
+                return
+
+            self.image = self.image.rotate(value, expand=True)
+            self.display_img()
+
     def reset(self):
         if self.original_img:
             self.image = self.original_img.copy()
@@ -58,10 +77,10 @@ class ImageEditor:
 
         self.load_btn.pack(pady=10)
 
-        self.image_label = tk.Label(self.root, bg="#e6f7ff")
+        self.image_label = tk.Label(self.root, bg="#5a5a5a")
         self.image_label.pack(pady=10)
 
-        self.filters_frame = tk.Frame(self.root, bg="#e6f7ff")
+        self.filters_frame = tk.Frame(self.root, bg="#5a5a5a")
         self.filters_frame.pack(pady=10)
 
         filters = [
@@ -70,19 +89,47 @@ class ImageEditor:
             ("Edge Enchance", ImageFilter.EDGE_ENHANCE),
             ("Emboss", ImageFilter.EMBOSS),
             ("Sharpen", ImageFilter.SHARPEN),
-            ("Smooth", ImageFilter.SMOOTH)
+            ("Smooth", ImageFilter.SMOOTH),
         ]
 
         for filter_name, filter_type in filters:
             tk.Button(self.filters_frame, 
                       text=filter_name,
                       command=lambda ft=filter_type: self.apply_filter(ft),
-                      bg="#007bff", 
-                      fg="white", 
+                      bg = "#e8e8e8", 
+                      fg="black", 
                       font=("Arial", 10), 
                       padx=10, pady=5).pack(side="left", padx=10, pady=5)
+        
+        #Grayscale Button
+        tk.Button(
+                    self.filters_frame,
+                    text="Grayscale",
+                    command=self.grayscale,
+                    bg="#e8e8e8",
+                    fg="black",
+                    font=("Arial", 10),
+                    padx=10,
+                    pady=5
+                ).pack(side="left", padx=10, pady=5)
+        
+        #Rotate Button
+        self.rotate_value = tk.Spinbox(root, from_=0, to=360)
+        self.rotate_value.pack(side="left", padx=10, pady=5)
+        tk.Button(
+                    self.filters_frame,
+                    text="Rotate",
+                    command=self.apply_rotate(self.rotate_value.get()),
+                    bg="#e8e8e8",
+                    fg="black",
+                    font=("Arial", 10),
+                    padx=10,
+                    pady=5
+                ).pack(side="left", padx=10, pady=5)
+        
+
             
-        self.buttons_frame = tk.Frame(self.root, bg="#e6f7ff")
+        self.buttons_frame = tk.Frame(self.root, bg="#5a5a5a")
         self.buttons_frame.pack(pady=20)
 
         self.reset_button = tk.Button(self.buttons_frame, 
