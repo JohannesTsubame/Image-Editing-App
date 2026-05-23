@@ -1,6 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from PIL import Image
+from modules import file, edit
 
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("green")
@@ -14,7 +15,7 @@ class ImageApp:
 
         self.original_img = None
         self.image = None
-        self.image_tk = None
+        self.image_ctk = None
 
         self.create_header(root)
 
@@ -32,21 +33,29 @@ class ImageApp:
                                   font=("Inter", 40, "bold"))
         self.label.pack(side="left", padx=15)
 
-    def menu_selected(self, dropdown, placeholder):
-        dropdown.set(placeholder)
+    # def menu_selected(self, dropdown, placeholder):
+    #     dropdown.set(placeholder)
+
+    def file_action(self, choice):
+        self.file_menu.set("📂 File")
+
+        if choice == "Open":
+            file.open_image(self)
+        elif choice == "Save":
+            file.save(self)
+
+        self.file_menu.set("📂 File")  
+
 
     def create_menu(self, root):
         top_frame = ctk.CTkFrame(self.root, fg_color="#fafafa", border_color="#000000", border_width=1, corner_radius=0)
         top_frame.pack(fill="x")
 
-        file_options = ["New",
-                        "Open",
-                        "Save",
-                        "Save As"]
+        file_options = ["Open",
+                        "Save"]
         
         self.file_menu = ctk.CTkOptionMenu(top_frame, 
-                                           command=lambda placeholder:
-                                                   self.menu_selected(self.file_menu, "📂 File"),
+                                           command=self.file_action,
                                            values=file_options,
                                            fg_color="#fafafa", 
                                            button_color="#fafafa",
@@ -133,6 +142,13 @@ class ImageApp:
             expand=True
         )
 
+        self.image_label = ctk.CTkLabel(
+            self.image_frame,
+            text=""
+        )
+
+        self.image_label.pack(expand=True)
+
         # RIGHT SIDEBAR
         self.sidebar_frame = ctk.CTkFrame(self.content_frame,
                                           width=250,
@@ -155,25 +171,6 @@ class ImageApp:
                                   font=("Inter", 20))
 
         self.label.pack(pady=30)
-
-    def load_img(self):
-        file_path = tk.filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.gif")])
-
-        if file_path:
-            self.original_img = tk.Image.open(file_path)
-            self.image = self.original_img.copy()
-            self.display_img()
-    
-    def display_img(self):
-        if self.image == None:
-            return
-        
-        aspect_ratio = self.image.width / self.image.height
-        new_width = 600
-        new_height = int(new_width/aspect_ratio)
-
-        self.image_tk = tk.ImageTk.PhotoImage(self.image.resize((new_width, new_height), tk.Image.LANCZOS))
-        self.image_label.config(image=self.image_tk)
 
 
 if __name__ == "__main__":

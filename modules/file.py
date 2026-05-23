@@ -1,20 +1,52 @@
-import tkinter as tk
+from tkinter import filedialog, messagebox
+from PIL import Image
+import customtkinter as ctk
 
-def load_img(self):
-        file_path = tk.filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.gif")])
 
-        if file_path:
-            self.original_img = tk.Image.open(file_path)
-            self.image = self.original_img.copy()
-            self.display_img()
+def open_image(app):
+
+    file_path = filedialog.askopenfilename(
+        title="Open Image",
+        filetypes=[("Image Files", "*.png *.jpg *.jpeg *.bmp *.webp")])
+
+    if not file_path:
+        return
+
+    app.current_image_path = file_path
+
+    app.image = Image.open(file_path)
+
+    app.original_img = app.image.copy()
+
+    display_image = app.image.copy()
+    display_image.thumbnail((1000, 700))
+
+    app.ctk_image = ctk.CTkImage(
+        light_image=display_image,
+        dark_image=display_image,
+        size=display_image.size
+    )
+
+    app.image_label.configure(
+        image=app.ctk_image,
+        text=""
+    )
+
+def save(app):
+    if not hasattr(app, "image"):
+        return
+
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".png", 
+        filetypes=[
+            ("PNG Files", "*.png"), 
+            ("JPEG Files", "*.jpg"), 
+            ("BMP Files", "*.bmp"),
+            ("All Files", "*.*")])
     
-def display_img(self):
-    if self.image == None:
+    if not file_path:
         return
     
-    aspect_ratio = self.image.width / self.image.height
-    new_width = 600
-    new_height = int(new_width/aspect_ratio)
-
-    self.image_tk = tk.ImageTk.PhotoImage(self.image.resize((new_width, new_height), tk.Image.LANCZOS))
-    self.image_label.config(image=self.image_tk)
+    app.image.save(file_path)
+    app.current_image_path = file_path
+    

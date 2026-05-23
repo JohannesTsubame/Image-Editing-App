@@ -2,8 +2,8 @@ import customtkinter as ctk
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk, ImageFilter, ImageColor, ImageOps
-import modules.color as color
-import modules.rotate as rotate
+# import modules.color as color
+# import modules.rotate as rotate
 
 class ImageEditor:
     def __init__(self, root):
@@ -44,7 +44,7 @@ class ImageEditor:
 
     def grayscale(self):
         if self.image:
-            self.image = color.grey_scale(self.image)
+            # self.image = color.grey_scale(self.image)
             self.display_img()
     
     def apply_rotate(self, value):
