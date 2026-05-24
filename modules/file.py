@@ -1,7 +1,7 @@
 from tkinter import filedialog, messagebox
-from PIL import Image
+from PIL import Image, ImageTk
 import customtkinter as ctk
-
+from modules import edit
 
 def open_image(app):
 
@@ -18,18 +18,25 @@ def open_image(app):
 
     app.original_img = app.image.copy()
 
+    edit.initialize_effects(app)
+
     display_image = app.image.copy()
     display_image.thumbnail((1000, 700))
 
-    app.ctk_image = ctk.CTkImage(
-        light_image=display_image,
-        dark_image=display_image,
-        size=display_image.size
-    )
+    app.tk_image = ImageTk.PhotoImage(display_image)
 
-    app.image_label.configure(
-        image=app.ctk_image,
-        text=""
+    app.canvas.delete("all")
+
+    app.root.update_idletasks()
+
+    canvas_width = app.canvas.winfo_width()
+    canvas_height = app.canvas.winfo_height()
+
+    app.canvas.create_image(
+        canvas_width // 2,
+        canvas_height // 2,
+        anchor="center",
+        image=app.tk_image
     )
 
 def save(app):

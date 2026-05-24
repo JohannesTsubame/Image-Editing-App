@@ -17,10 +17,13 @@ class ImageApp:
         self.image = None
         self.image_ctk = None
 
+        #Crop Var
+        self.crop_start_x = 0
+        self.crop_start_y = 0
+        self.crop_rect = None
+
         self.create_header(root)
-
         self.create_menu(root)
-
         self.create_layout(root)
 
     def create_header(self, root):
@@ -33,28 +36,24 @@ class ImageApp:
                                   font=("Inter", 40, "bold"))
         self.label.pack(side="left", padx=15)
 
-    # def menu_selected(self, dropdown, placeholder):
-    #     dropdown.set(placeholder)
-
     def file_action(self, choice):
-        self.file_menu.set("📂 File")
+        self.file_menu.set("🗀 File")
 
         if choice == "Open":
             file.open_image(self)
         elif choice == "Save":
             file.save(self)
 
-        self.file_menu.set("📂 File")  
-
     def edit_action(self, choice):
         self.edit_menu.set("✎ Edit")
 
         if choice == "Color":
             sidebar.color_sidebar(self)
+        elif choice == "Reshape":
+            sidebar.reshape_sidebar(self)
 
-    def filter_action(self, choice):
-        self.filter_menu.set("⚙ Filter")
-
+    def filter_action(self):
+        sidebar.filter_sidebar(self)
 
     def create_menu(self, root):
         top_frame = ctk.CTkFrame(self.root, fg_color="#fafafa", border_color="#000000", border_width=1, corner_radius=0)
@@ -74,13 +73,11 @@ class ImageApp:
                                            height=20,
                                            width=70,
                                            text_color="#000000")
-        self.file_menu.set("📂 File")
+        self.file_menu.set("🗀 File")
         self.file_menu.pack(side="left", pady=3, padx=5)
 
         #Edit
-        edit_options = ["Color", 
-                        "Crop", 
-                        "Resize"]
+        edit_options = ["Color", "Reshape"]
         self.edit_menu = ctk.CTkOptionMenu(top_frame, 
                                            command=self.edit_action,
                                            values=edit_options,
@@ -95,37 +92,39 @@ class ImageApp:
         self.edit_menu.pack(side="left", pady=3, padx=5)
 
         #Filter
+        self.filter_btn = ctk.CTkButton(
+            top_frame,
+            text="⚙ Filter",
+            command=self.filter_action,
+            fg_color="#fafafa", 
+            hover_color="#bababa",
+            font=("Inter", 16),
+            height=20,
+            width=70,
+            text_color="#000000")
+        
+        self.filter_btn.pack(side="left", pady=3, padx=5)
+
         filter_options = ["Blur",
                           "Sharpen",
-                          "Contour",
                           "Enhance",
-                          "Emboss",
                           "Smooth"]
-        self.filter_menu = ctk.CTkOptionMenu(top_frame, 
-                                             command=self.filter_action,
-                                             values=filter_options,
-                                             fg_color="#fafafa", 
-                                             button_color="#fafafa",
-                                             button_hover_color="#bababa",
-                                             font=("Inter", 16),
-                                             height=20,
-                                             width=70,
-                                             text_color="#000000")
-        self.filter_menu.set("⚙ Filter")
-        self.filter_menu.pack(side="left", pady=3, padx=5)
 
-
-        buttons = ["⟳ Reset",
-                   "↩️ Undo",
-                   "↪️ Redo",
+        buttons = ["↩ Undo",
+                   "↪ Redo",
+                   "⟳ Reset",
                    "⊖ Zoom Out",
-                   "⊕ Zoom In"]
+                   "⊕ Zoom In",]
         for btn in buttons:
+            if btn == "⟳ Reset":
+                txt_clr = "#ef3030"
+            else:
+                txt_clr = "#000000"
             self.button = ctk.CTkButton(top_frame,
                                         text=btn,
                                         fg_color="#fafafa", 
                                         font=("Inter", 16),
-                                        text_color="#000000",
+                                        text_color=txt_clr,
                                         hover_color="#bababa",
                                         height=20,
                                         width=70,)
@@ -149,12 +148,17 @@ class ImageApp:
             expand=True
         )
 
-        self.image_label = ctk.CTkLabel(
+        self.canvas = tk.Canvas(
             self.image_frame,
-            text=""
+
+            bg="#cfcfcf",
+            highlightthickness=0
         )
 
-        self.image_label.pack(expand=True)
+        self.canvas.pack(
+            fill="both",
+            expand=True
+        )
 
         #Slider Bar
         self.sidebar_frame = ctk.CTkFrame(self.content_frame,
