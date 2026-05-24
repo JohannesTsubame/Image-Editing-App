@@ -1,7 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from PIL import Image
-from modules import file, edit
+from modules import file, edit, sidebar
 
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("green")
@@ -48,6 +48,9 @@ class ImageApp:
 
     def edit_action(self, choice):
         self.edit_menu.set("✎ Edit")
+
+        if choice == "Color":
+            sidebar.color_sidebar(self)
 
     def filter_action(self, choice):
         self.filter_menu.set("⚙ Filter")
@@ -115,8 +118,8 @@ class ImageApp:
         buttons = ["⟳ Reset",
                    "↩️ Undo",
                    "↪️ Redo",
-                   "⊕ Zoom In",
-                   "⊖ Zoom Out"]
+                   "⊖ Zoom Out",
+                   "⊕ Zoom In"]
         for btn in buttons:
             self.button = ctk.CTkButton(top_frame,
                                         text=btn,
@@ -174,20 +177,6 @@ class ImageApp:
         self.sidebar_upper = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent")
         self.sidebar_upper.pack(fill="both", expand=True)
 
-        self.slider = ctk.CTkSlider(self.sidebar_upper, 
-                                    from_=-100, 
-                                    to=100,
-                                    fg_color="#AAAAAA",
-                                    progress_color="#732828",
-                                    button_color="#ff5353",
-                                    button_hover_color="#b33a3a")
-        self.slider.set(0)
-        self.slider.pack()
-        
-        value = self.slider.get()
-        self.slider_value = ctk.CTkLabel(self.sidebar_upper, text=value)
-        self.slider_value.pack()
-
         #Bottom Part
         self.sidebar_bottom = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent", height=70)
         self.sidebar_bottom.pack(side="bottom", fill="x")
@@ -202,8 +191,6 @@ class ImageApp:
                                        width=200,
                                        corner_radius=20)
         self.apply_btn.pack(pady=10)
-
-
 
 if __name__ == "__main__":
     root = ctk.CTk()
