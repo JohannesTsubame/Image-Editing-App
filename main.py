@@ -129,15 +129,13 @@ class ImageApp:
             self.button.pack(side="left", pady=3, padx=5)
     
     def create_layout(self, root):
-
-        # MAIN CONTENT AREA
         self.content_frame = ctk.CTkFrame(self.root,
                                           fg_color="#d3d3d3",
                                           corner_radius=0)
 
         self.content_frame.pack(fill="both", expand=True)
 
-        # LEFT IMAGE AREA
+        #Image Area
         self.image_frame = ctk.CTkFrame(self.content_frame,
                                         fg_color="#cfcfcf",
                                         corner_radius=0)
@@ -155,7 +153,7 @@ class ImageApp:
 
         self.image_label.pack(expand=True)
 
-        # RIGHT SIDEBAR
+        #Slider Bar
         self.sidebar_frame = ctk.CTkFrame(self.content_frame,
                                           width=250,
                                           fg_color="#efefef",
@@ -172,11 +170,39 @@ class ImageApp:
 
         self.border.pack(side="left", fill="y")
 
-        self.label = ctk.CTkLabel(self.sidebar_frame,
-                                  text="Placeholder",
-                                  font=("Inter", 20))
+        #Upper Part
+        self.sidebar_upper = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent")
+        self.sidebar_upper.pack(fill="both", expand=True)
 
-        self.label.pack(pady=30)
+        self.slider = ctk.CTkSlider(self.sidebar_upper, 
+                                    from_=-100, 
+                                    to=100,
+                                    fg_color="#AAAAAA",
+                                    progress_color="#732828",
+                                    button_color="#ff5353",
+                                    button_hover_color="#b33a3a")
+        self.slider.set(0)
+        self.slider.pack()
+        
+        value = self.slider.get()
+        self.slider_value = ctk.CTkLabel(self.sidebar_upper, text=value)
+        self.slider_value.pack()
+
+        #Bottom Part
+        self.sidebar_bottom = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent", height=70)
+        self.sidebar_bottom.pack(side="bottom", fill="x")
+        self.sidebar_bottom.pack_propagate(False)
+
+        self.apply_btn = ctk.CTkButton(self.sidebar_bottom, 
+                                       text="Apply",
+                                       fg_color="#ff5353",
+                                       hover_color="#b33a3a",
+                                       font=("Inter", 20, "bold"),
+                                       height=40,
+                                       width=200,
+                                       corner_radius=20)
+        self.apply_btn.pack(pady=10)
+
 
 
 if __name__ == "__main__":
