@@ -46,14 +46,21 @@ class ImageApp:
 
         self.file_menu.set("📂 File")  
 
+    def edit_action(self, choice):
+        self.edit_menu.set("✎ Edit")
+
+    def filter_action(self, choice):
+        self.filter_menu.set("⚙ Filter")
+
 
     def create_menu(self, root):
         top_frame = ctk.CTkFrame(self.root, fg_color="#fafafa", border_color="#000000", border_width=1, corner_radius=0)
         top_frame.pack(fill="x")
 
+
+        #File
         file_options = ["Open",
                         "Save"]
-        
         self.file_menu = ctk.CTkOptionMenu(top_frame, 
                                            command=self.file_action,
                                            values=file_options,
@@ -67,13 +74,12 @@ class ImageApp:
         self.file_menu.set("📂 File")
         self.file_menu.pack(side="left", pady=3, padx=5)
 
+        #Edit
         edit_options = ["Color", 
                         "Crop", 
                         "Resize"]
-        
         self.edit_menu = ctk.CTkOptionMenu(top_frame, 
-                                           command=lambda placeholder:
-                                                   self.menu_selected(self.edit_menu, "✎ Edit"),
+                                           command=self.edit_action,
                                            values=edit_options,
                                            fg_color="#fafafa", 
                                            button_color="#fafafa",
@@ -85,32 +91,32 @@ class ImageApp:
         self.edit_menu.set("✎ Edit")
         self.edit_menu.pack(side="left", pady=3, padx=5)
 
+        #Filter
         filter_options = ["Blur",
                           "Sharpen",
                           "Contour",
                           "Enhance",
                           "Emboss",
                           "Smooth"]
-        
         self.filter_menu = ctk.CTkOptionMenu(top_frame, 
-                                           command=lambda placeholder:
-                                                   self.menu_selected(self.filter_menu, "⚙ Filter"),
-                                           values=filter_options,
-                                           fg_color="#fafafa", 
-                                           button_color="#fafafa",
-                                           button_hover_color="#bababa",
-                                           font=("Inter", 16),
-                                           height=20,
-                                           width=70,
-                                           text_color="#000000")
+                                             command=self.filter_action,
+                                             values=filter_options,
+                                             fg_color="#fafafa", 
+                                             button_color="#fafafa",
+                                             button_hover_color="#bababa",
+                                             font=("Inter", 16),
+                                             height=20,
+                                             width=70,
+                                             text_color="#000000")
         self.filter_menu.set("⚙ Filter")
         self.filter_menu.pack(side="left", pady=3, padx=5)
 
 
         buttons = ["⟳ Reset",
                    "↩️ Undo",
-                   "↪️ Redo"]
-        
+                   "↪️ Redo",
+                   "⊕ Zoom In",
+                   "⊖ Zoom Out"]
         for btn in buttons:
             self.button = ctk.CTkButton(top_frame,
                                         text=btn,
