@@ -1,6 +1,9 @@
 import customtkinter as ctk
 from modules import edit, filter_
 
+def slider_save(app, slider):
+    slider.bind("<ButtonRelease-1>", lambda event: edit.save_state(app))
+
 def refresh_sidebar(app):
     for widget in app.sidebar_upper.winfo_children():
         widget.destroy()
@@ -139,10 +142,10 @@ def color_sidebar(app):
     hue_name_label =  ctk.CTkLabel(hue_row, text="Hue")
     hue_name_label.pack(side="left")
 
-    hue_value_label = ctk.CTkLabel(hue_row, text="0")
+    hue_value_label = ctk.CTkLabel(hue_row, text=f"{app.effects["hue"]:.0f}")
     hue_value_label.pack(side="right")
 
-    hue_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.hue_slide = ctk.CTkSlider(app.sidebar_upper, 
                               from_=-180,
                               to=180,
                               command=lambda value:
@@ -151,8 +154,9 @@ def color_sidebar(app):
                               progress_color="#732828",
                               button_color="#ff5353",
                               button_hover_color="#b33a3a")
-    hue_slide.set(0)
-    hue_slide.pack(fill="x", padx=20)
+    app.hue_slide.set(app.effects["hue"])
+    app.hue_slide.pack(fill="x", padx=20)
+    slider_save(app, app.hue_slide)
 
     #Saturation
     saturation_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
@@ -161,10 +165,10 @@ def color_sidebar(app):
     saturation_name_label = ctk.CTkLabel(saturation_row, text="Saturation")
     saturation_name_label.pack(side="left")
 
-    saturation_value_label = ctk.CTkLabel(saturation_row, text="0")
+    saturation_value_label = ctk.CTkLabel(saturation_row, text=f"{app.effects["saturation"]*100-100:.0f}")
     saturation_value_label.pack(side="right")
 
-    saturation_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.saturation_slide = ctk.CTkSlider(app.sidebar_upper, 
                                      from_=0,
                                      to=2,
                                      command=lambda value:
@@ -173,8 +177,9 @@ def color_sidebar(app):
                                      progress_color="#732828",
                                      button_color="#ff5353",
                                      button_hover_color="#b33a3a")
-    saturation_slide.set(1)
-    saturation_slide.pack(fill="x", padx=20)
+    app.saturation_slide.set(app.effects["saturation"])
+    app.saturation_slide.pack(fill="x", padx=20)
+    slider_save(app, app.saturation_slide)
 
     #Brightness
     brightness_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
@@ -183,10 +188,10 @@ def color_sidebar(app):
     brightness_name_label = ctk.CTkLabel(brightness_row, text="Brightness")
     brightness_name_label.pack(side="left")
 
-    brightness_value_label = ctk.CTkLabel(brightness_row, text="0")
+    brightness_value_label = ctk.CTkLabel(brightness_row, text=f"{app.effects["brightness"]*100-100:.0f}")
     brightness_value_label.pack(side="right")
 
-    brightness_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.brightness_slide = ctk.CTkSlider(app.sidebar_upper, 
                                      from_=0,
                                      to=2,
                                      command=lambda value:
@@ -199,8 +204,9 @@ def color_sidebar(app):
                                      progress_color="#732828",
                                      button_color="#ff5353",
                                      button_hover_color="#b33a3a")
-    brightness_slide.set(1)
-    brightness_slide.pack(fill="x", padx=20)
+    app.brightness_slide.set(app.effects["brightness"])
+    app.brightness_slide.pack(fill="x", padx=20)
+    slider_save(app, app.brightness_slide)
 
     #Contrast
     contrast_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
@@ -209,10 +215,10 @@ def color_sidebar(app):
     contrast_name_label = ctk.CTkLabel(contrast_row, text="Contrast")
     contrast_name_label.pack(side="left")
 
-    contrast_value_label = ctk.CTkLabel(contrast_row, text="0")
+    contrast_value_label = ctk.CTkLabel(contrast_row, text=f"{app.effects["contrast"]*100-100:.0f}")
     contrast_value_label.pack(side="right")
 
-    contrast_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.contrast_slide = ctk.CTkSlider(app.sidebar_upper, 
                                      from_=0,
                                      to=2,
                                      command=lambda value:
@@ -225,8 +231,9 @@ def color_sidebar(app):
                                      progress_color="#732828",
                                      button_color="#ff5353",
                                      button_hover_color="#b33a3a")
-    contrast_slide.set(1)
-    contrast_slide.pack(fill="x", padx=20)
+    app.contrast_slide.set(app.effects["contrast"])
+    app.contrast_slide.pack(fill="x", padx=20)
+    slider_save(app, app.contrast_slide)
 
     #Grayscale
     grayscale_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
@@ -249,10 +256,10 @@ def color_sidebar(app):
 
     grayscale_checkbox.pack(side="left")
 
-    grayscale_value_label = ctk.CTkLabel(grayscale_row, text="0")
+    grayscale_value_label = ctk.CTkLabel(grayscale_row, text=f"{app.effects["grayscale_threshold"]}")
     grayscale_value_label.pack(side="right")
 
-    grayscale_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.grayscale_slide = ctk.CTkSlider(app.sidebar_upper, 
                                      from_=0,
                                      to=255,
                                      command=lambda value: edit.grayscale_threshold(
@@ -262,12 +269,15 @@ def color_sidebar(app):
                                      progress_color="#000000",
                                      button_color="#9f9f9f",
                                      button_hover_color="#595959")
-    grayscale_slide.set(128)
-    grayscale_slide.pack(fill="x", padx=20)
+    app.grayscale_slide.set(app.effects["grayscale_threshold"])
+    app.grayscale_slide.pack(fill="x", padx=20)
+    slider_save(app, app.grayscale_slide)
 
     #Invert 
     invert_button = ctk.CTkButton(app.sidebar_upper,
-                                  command=lambda: apply_effect(app, edit.invert),
+                                  command=lambda: 
+                                        (edit.save_state(app),
+                                        apply_effect(app, edit.invert)),
                                   text="Invert",
                                   fg_color="#bb2e1e",
                                   hover_color="#474e9f",
@@ -289,10 +299,10 @@ def reshape_sidebar(app):
     rotate_name_label = ctk.CTkLabel(rotate_row, text="Rotate")
     rotate_name_label.pack(side="left")
 
-    rotate_value_label = ctk.CTkLabel(rotate_row, text="0°")
+    rotate_value_label = ctk.CTkLabel(rotate_row, text=f"{app.effects["rotation"]}°")
     rotate_value_label.pack(side="right")
 
-    rotate_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.rotate_slide = ctk.CTkSlider(app.sidebar_upper, 
                                      from_=0,
                                      to=360,
                                      command=lambda value:
@@ -305,33 +315,34 @@ def reshape_sidebar(app):
                                      progress_color="#732828",
                                      button_color="#ff5353",
                                      button_hover_color="#b33a3a")
-    rotate_slide.set(0)
-    rotate_slide.pack(fill="x", padx=20)
+    app.rotate_slide.set(app.effects["rotation"])
+    app.rotate_slide.pack(fill="x", padx=20)
+    slider_save(app, app.rotate_slide)
 
     rotate_r = ctk.CTkButton(app.sidebar_upper, 
                              text="Rotate Right     ⟳",
-                             command=lambda:edit.rotate_right(app),
+                             command=lambda:(edit.save_state(app), edit.rotate_right(app)),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     rotate_r.pack(padx=20, pady=5, fill="x")
 
     rotate_l = ctk.CTkButton(app.sidebar_upper, 
                              text="Rotate Left     ⟲",
-                             command=lambda:edit.rotate_left(app),
+                             command=lambda:(edit.save_state(app), edit.rotate_left(app)),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     rotate_l.pack(padx=20, pady=5, fill="x")
 
     flip_horizontal = ctk.CTkButton(app.sidebar_upper, 
                              text="Flip Horizontal    ⇋",
-                             command=lambda:edit.flip_horizontal(app),
+                             command=lambda:(edit.save_state(app), edit.flip_horizontal(app)),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     flip_horizontal.pack(padx=20, pady=5, fill="x")
 
     flip_vertical = ctk.CTkButton(app.sidebar_upper, 
                              text="Flip Vertical     ⇅",
-                             command=lambda:edit.flip_vertical(app),
+                             command=lambda:(edit.save_state(app), edit.flip_vertical(app)),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     flip_vertical.pack(padx=20, pady=5, fill="x")
@@ -361,14 +372,14 @@ def reshape_sidebar(app):
     resize_btn = ctk.CTkButton(app.sidebar_upper, 
                                text="Resize",
                                command=lambda:
-                               apply_resize(app, width_entry.get(), height_entry.get()),
+                               (edit.save_state(app), apply_resize(app, width_entry.get(), height_entry.get())),
                                fg_color="#ff5353",
                                hover_color="#b33a3a")
     resize_btn.pack(fill="x", padx=20)
 
     #Crop
     crop_btn = ctk.CTkButton(app.sidebar_upper, 
-                             command=lambda:enable_crop(app),
+                             command=lambda:(edit.save_state(app), enable_crop(app)),
                              text="Crop",
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
@@ -389,10 +400,10 @@ def filter_sidebar(app):
     blur_name_label = ctk.CTkLabel(blur_row, text="Blur")
     blur_name_label.pack(side="left")
 
-    blur_value_label = ctk.CTkLabel(blur_row, text="0")
+    blur_value_label = ctk.CTkLabel(blur_row, text=f"{app.effects["blur"]}")
     blur_value_label.pack(side="right")
 
-    blur_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.blur_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
                                to=20,
                                command=lambda value:
@@ -405,8 +416,9 @@ def filter_sidebar(app):
                                progress_color="#732828",
                                button_color="#ff5353",
                                button_hover_color="#b33a3a")
-    blur_slide.set(1)
-    blur_slide.pack(fill="x", padx=20)
+    app.blur_slide.set(app.effects["blur"])
+    app.blur_slide.pack(fill="x", padx=20)
+    slider_save(app, app.blur_slide)
 
     #Smooth
     smooth_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
@@ -415,10 +427,10 @@ def filter_sidebar(app):
     smooth_name_label = ctk.CTkLabel(smooth_row, text="Smooth")
     smooth_name_label.pack(side="left")
 
-    smooth_value_label = ctk.CTkLabel(smooth_row, text="0")
+    smooth_value_label = ctk.CTkLabel(smooth_row, text=f"{app.effects["smooth"]}")
     smooth_value_label.pack(side="right")
 
-    smooth_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.smooth_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
                                to=3,
                                command=lambda value:
@@ -431,8 +443,9 @@ def filter_sidebar(app):
                                progress_color="#732828",
                                button_color="#ff5353",
                                button_hover_color="#b33a3a")
-    smooth_slide.set(0)
-    smooth_slide.pack(fill="x", padx=20)
+    app.smooth_slide.set(app.effects["smooth"])
+    app.smooth_slide.pack(fill="x", padx=20)
+    slider_save(app, app.smooth_slide)
 
     #Sharpen
     sharpen_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
@@ -441,10 +454,10 @@ def filter_sidebar(app):
     sharpen_name_label = ctk.CTkLabel(sharpen_row, text="Sharpen")
     sharpen_name_label.pack(side="left")
 
-    sharpen_value_label = ctk.CTkLabel(sharpen_row, text="0")
+    sharpen_value_label = ctk.CTkLabel(sharpen_row, text=f"{app.effects["sharpen"]}")
     sharpen_value_label.pack(side="right")
 
-    sharpen_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.sharpen_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
                                to=5,
                                command=lambda value:
@@ -457,8 +470,9 @@ def filter_sidebar(app):
                                progress_color="#732828",
                                button_color="#ff5353",
                                button_hover_color="#b33a3a")
-    sharpen_slide.set(1)
-    sharpen_slide.pack(fill="x", padx=20)
+    app.sharpen_slide.set(app.effects["sharpen"])
+    app.sharpen_slide.pack(fill="x", padx=20)
+    slider_save(app, app.sharpen_slide)
 
     #Edge Enchance
     edge_enhance_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
@@ -467,10 +481,10 @@ def filter_sidebar(app):
     edge_enhance_name_label = ctk.CTkLabel(edge_enhance_row, text="Edge Enhance")
     edge_enhance_name_label.pack(side="left")
 
-    edge_enhance_value_label = ctk.CTkLabel(edge_enhance_row, text="0")
+    edge_enhance_value_label = ctk.CTkLabel(edge_enhance_row, text=f"{app.effects["edge_enhance"]}")
     edge_enhance_value_label.pack(side="right")
 
-    edge_enhance_slide = ctk.CTkSlider(app.sidebar_upper, 
+    app.edge_enhance_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
                                to=3,
                                command=lambda value:
@@ -483,5 +497,6 @@ def filter_sidebar(app):
                                progress_color="#732828",
                                button_color="#ff5353",
                                button_hover_color="#b33a3a")
-    edge_enhance_slide.set(0)
-    edge_enhance_slide.pack(fill="x", padx=20)
+    app.edge_enhance_slide.set(app.effects["edge_enhance"])
+    app.edge_enhance_slide.pack(fill="x", padx=20)
+    slider_save(app, app.edge_enhance_slide)

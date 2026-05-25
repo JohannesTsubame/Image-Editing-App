@@ -1,20 +1,110 @@
-from PIL import ImageEnhance, ImageOps, ImageTk, Image
+from PIL import ImageEnhance, ImageOps, ImageTk, Image, ImageFilter
 import numpy as np
+import copy
+
+def undo(app):
+    if not app.undo_stack:
+        return
+
+    current_state = {
+        "image": app.image.copy(),
+        "original_img": app.original_img.copy(),
+        "effects": copy.deepcopy(app.effects)
+    }
+
+    app.redo_stack.append(current_state)
+
+    previous_state = app.undo_stack.pop()
+
+    app.image = previous_state["image"]
+    app.original_img = previous_state["original_img"]
+    app.effects = previous_state["effects"]
+
+    refresh_image(app)
+    update_ui_sliders(app)
+
+def redo(app):
+    if not app.redo_stack:
+        return
+
+    current_state = {
+        "image": app.image.copy(),
+        "original_img": app.original_img.copy(),
+        "effects": copy.deepcopy(app.effects)
+    }
+
+    app.undo_stack.append(current_state)
+
+    next_state = app.redo_stack.pop()
+
+    app.image = next_state["image"]
+    app.original_img = next_state["original_img"]
+    app.effects = next_state["effects"]
+
+    refresh_image(app)
+    update_ui_sliders(app)
+
+def reset(app):
+    if app.original_img is None:
+        return
+
+    save_state(app)
+
+    app.image = app.original_img.copy()
+
+    initialize_effects(app)
+
+    refresh_image(app)
+    update_ui_sliders(app)
+
+def save_state(app):
+    state = {
+        "image": app.image.copy(),
+        "original_img": app.original_img.copy(),
+        "effects": copy.deepcopy(app.effects)
+    }
+
+    app.undo_stack.append(state)
+
+    if len(app.undo_stack) > 20:
+        app.undo_stack.pop(0)
+
+    app.redo_stack.clear()
 
 def refresh_image(app):
     if app.image is None:
         return
 
     display = app.image.copy()
-    display.thumbnail((1000, 700))
+
+    canvas_width = app.canvas.winfo_width()
+    canvas_height = app.canvas.winfo_height()
+
+    img_width = display.width
+    img_height = display.height
+
+    fit_scale = min(
+        canvas_width / img_width,
+        canvas_height / img_height,
+        1
+    )
+
+    zoom = app.effects["zoom"]
+
+    scale = fit_scale * zoom
+
+    new_width = int(img_width * scale)
+    new_height = int(img_height * scale)
+
+    display = display.resize(
+        (new_width, new_height),
+        Image.Resampling.LANCZOS
+    )
 
     app.display_width = display.width
     app.display_height = display.height
 
     app.tk_image = ImageTk.PhotoImage(display)
-
-    canvas_width = app.canvas.winfo_width()
-    canvas_height = app.canvas.winfo_height()
 
     center_x = canvas_width // 2
     center_y = canvas_height // 2
@@ -43,6 +133,9 @@ def refresh_image(app):
 
 def initialize_effects(app):
     app.effects = {
+        "zoom" : 1.0,
+
+        #Colors
         "hue": 0,
         "saturation": 1.0,
         "brightness": 1.0,
@@ -50,6 +143,8 @@ def initialize_effects(app):
         "grayscale": False,
         "grayscale_threshold": 128,
         "invert": False,
+
+        #Reshape
         "rotation": 0,
         "flip_horizontal": False,
         "flip_vertical": False,
@@ -98,6 +193,31 @@ def render_effects(app):
         app.effects["contrast"]
     )
 
+    #Filters
+    blur = app.effects["blur"]
+    if blur > 0:
+        image = image.filter(
+            ImageFilter.GaussianBlur(radius=blur)
+        )
+
+    smooth = app.effects["smooth"]
+    if smooth > 0:
+        image = image.filter(
+            ImageFilter.SMOOTH_MORE
+        )
+
+    sharpen = app.effects["sharpen"]
+    if sharpen > 0:
+        image = ImageEnhance.Sharpness(image).enhance(
+            1 + sharpen
+        )
+
+    edge_enhance = app.effects["edge_enhance"]
+    if edge_enhance > 0:
+        image = image.filter(
+            ImageFilter.EDGE_ENHANCE_MORE
+        )
+
     if app.effects["grayscale"]:
         gray = image.convert("L")
         threshold = app.effects["grayscale_threshold"]
@@ -134,6 +254,23 @@ def render_effects(app):
     if crop is not None:
         image = image.crop(crop)
     app.image = image
+
+    refresh_image(app)
+
+def zoom_in(app):
+    app.effects["zoom"] *= 1.1
+
+    if app.effects["zoom"] > 5:
+        app.effects["zoom"] = 5
+
+    refresh_image(app)
+
+
+def zoom_out(app):
+    app.effects["zoom"] *= 0.9
+
+    if app.effects["zoom"] < 0.1:
+        app.effects["zoom"] = 0.1
 
     refresh_image(app)
 
@@ -225,3 +362,34 @@ def crop(app, left, top, right, bottom):
 def apply_changes(app):
     app.original_img = app.image.copy()
     initialize_effects(app)
+
+def update_ui_sliders(app):
+    if hasattr(app, "hue_slide"):
+        app.hue_slide.set(app.effects["hue"])
+
+    if hasattr(app, "saturation_slide"):
+        app.saturation_slide.set(app.effects["saturation"])
+
+    if hasattr(app, "brightness_slide"):
+        app.brightness_slide.set(app.effects["brightness"])
+
+    if hasattr(app, "contrast_slide"):
+        app.contrast_slide.set(app.effects["contrast"])
+
+    if hasattr(app, "grayscale_slide"):
+        app.grayscale_slide.set(app.effects["grayscale_threshold"])
+
+    if hasattr(app, "rotate_slide"):
+        app.rotate_slide.set(app.effects["rotation"])
+
+    if hasattr(app, "blur_slide"):
+        app.blur_slide.set(app.effects["blur"])
+
+    if hasattr(app, "smooth_slide"):
+        app.smooth_slide.set(app.effects["smooth"])
+
+    if hasattr(app, "sharpen_slide"):
+        app.sharpen_slide.set(app.effects["sharpen"])
+
+    if hasattr(app, "edge_enhance_slide"):
+        app.edge_enhance_slide.set(app.effects["edge_enhance"])

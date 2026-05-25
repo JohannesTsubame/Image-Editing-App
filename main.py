@@ -16,6 +16,11 @@ class ImageApp:
         self.original_img = None
         self.image = None
         self.image_ctk = None
+        self.active_menu = None
+
+        #History Var
+        self.undo_stack = []
+        self.redo_stack = []
 
         #Crop Var
         self.crop_start_x = 0
@@ -47,12 +52,15 @@ class ImageApp:
     def edit_action(self, choice):
         self.edit_menu.set("✎ Edit")
 
+        self.active_menu = choice
+
         if choice == "Color":
             sidebar.color_sidebar(self)
         elif choice == "Reshape":
             sidebar.reshape_sidebar(self)
 
     def filter_action(self):
+        self.active_menu = "Filter"
         sidebar.filter_sidebar(self)
 
     def create_menu(self, root):
@@ -110,18 +118,21 @@ class ImageApp:
                           "Enhance",
                           "Smooth"]
 
-        buttons = ["↩ Undo",
-                   "↪ Redo",
-                   "⟳ Reset",
-                   "⊖ Zoom Out",
-                   "⊕ Zoom In",]
-        for btn in buttons:
+        buttons = [("↩ Undo", edit.undo),
+                   ("↪ Redo", edit.redo),
+                   ("⟳ Reset", edit.reset),
+                   ("⊖ Zoom Out", edit.zoom_out),
+                   ("⊕ Zoom In", edit.zoom_in),]
+
+        for btn, command in buttons:
             if btn == "⟳ Reset":
                 txt_clr = "#ef3030"
             else:
                 txt_clr = "#000000"
             self.button = ctk.CTkButton(top_frame,
                                         text=btn,
+                                        command=lambda cmd=command:
+                                            cmd(self) if cmd else None,
                                         fg_color="#fafafa", 
                                         font=("Inter", 16),
                                         text_color=txt_clr,
