@@ -54,7 +54,13 @@ def initialize_effects(app):
         "flip_horizontal": False,
         "flip_vertical": False,
         "resize": None,
-        "crop": None
+        "crop": None,
+
+        #Filters
+        "blur": 0,
+        "smooth": 0,
+        "sharpen": 0,
+        "edge_enhance": 0,
     }
 
 def render_effects(app):

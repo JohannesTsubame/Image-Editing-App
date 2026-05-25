@@ -4,7 +4,6 @@ import customtkinter as ctk
 from modules import edit
 
 def open_image(app):
-
     file_path = filedialog.askopenfilename(
         title="Open Image",
         filetypes=[("Image Files", "*.png *.jpg *.jpeg *.bmp *.webp")])

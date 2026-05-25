@@ -25,6 +25,10 @@ def update_slider_gray(app, value, label, func):
 
     func(app, value)
 
+def update_slider_filter(app, value, label, func):
+    label.configure(text=f"{float(value):.1f}")
+    func(app, value)
+
 def apply_effect(app, func):
     func(app)
 
@@ -238,8 +242,9 @@ def color_sidebar(app):
             app,
             grayscale_var.get()
         ),
-        fg_color="#ff5353",
-        hover_color="#732828"
+        fg_color="#0D0D0D",
+        hover_color="#D7D7D7",
+        border_color="#0a0a0a"
     )
 
     grayscale_checkbox.pack(side="left")
@@ -254,9 +259,9 @@ def color_sidebar(app):
                                         app,
                                         value),
                                      fg_color="#AAAAAA",
-                                     progress_color="#732828",
-                                     button_color="#ff5353",
-                                     button_hover_color="#b33a3a")
+                                     progress_color="#000000",
+                                     button_color="#9f9f9f",
+                                     button_hover_color="#595959")
     grayscale_slide.set(128)
     grayscale_slide.pack(fill="x", padx=20)
 
@@ -389,9 +394,9 @@ def filter_sidebar(app):
 
     blur_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
-                               to=2,
+                               to=20,
                                command=lambda value:
-                                       update_slider(
+                                       update_slider_filter(
                                            app, 
                                            value,
                                            blur_value_label,
@@ -415,9 +420,9 @@ def filter_sidebar(app):
 
     smooth_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
-                               to=2,
+                               to=3,
                                command=lambda value:
-                                       update_slider(
+                                       update_slider_filter(
                                            app, 
                                            value,
                                            smooth_value_label,
@@ -426,7 +431,7 @@ def filter_sidebar(app):
                                progress_color="#732828",
                                button_color="#ff5353",
                                button_hover_color="#b33a3a")
-    smooth_slide.set(1)
+    smooth_slide.set(0)
     smooth_slide.pack(fill="x", padx=20)
 
     #Sharpen
@@ -441,9 +446,9 @@ def filter_sidebar(app):
 
     sharpen_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
-                               to=2,
+                               to=5,
                                command=lambda value:
-                                       update_slider(
+                                       update_slider_filter(
                                            app, 
                                            value,
                                            sharpen_value_label,
@@ -467,9 +472,9 @@ def filter_sidebar(app):
 
     edge_enhance_slide = ctk.CTkSlider(app.sidebar_upper, 
                                from_=0,
-                               to=2,
+                               to=3,
                                command=lambda value:
-                                       update_slider(
+                                       update_slider_filter(
                                            app, 
                                            value,
                                            edge_enhance_value_label,
@@ -478,5 +483,5 @@ def filter_sidebar(app):
                                progress_color="#732828",
                                button_color="#ff5353",
                                button_hover_color="#b33a3a")
-    edge_enhance_slide.set(1)
+    edge_enhance_slide.set(0)
     edge_enhance_slide.pack(fill="x", padx=20)
