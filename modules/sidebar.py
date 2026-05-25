@@ -228,8 +228,21 @@ def color_sidebar(app):
     grayscale_row = ctk.CTkFrame(app.sidebar_upper, fg_color="transparent")
     grayscale_row.pack(fill="x", padx=20, pady=(20, 0))
 
-    grayscale_name_label = ctk.CTkLabel(grayscale_row, text="grayscale")
-    grayscale_name_label.pack(side="left")
+    grayscale_var = ctk.BooleanVar(value=False)
+
+    grayscale_checkbox = ctk.CTkCheckBox(
+        grayscale_row,
+        text="Black & White",
+        variable=grayscale_var,
+        command=lambda: edit.grayscale(
+            app,
+            grayscale_var.get()
+        ),
+        fg_color="#ff5353",
+        hover_color="#732828"
+    )
+
+    grayscale_checkbox.pack(side="left")
 
     grayscale_value_label = ctk.CTkLabel(grayscale_row, text="0")
     grayscale_value_label.pack(side="right")
@@ -237,12 +250,9 @@ def color_sidebar(app):
     grayscale_slide = ctk.CTkSlider(app.sidebar_upper, 
                                      from_=0,
                                      to=255,
-                                     command=lambda value:
-                                             update_slider_gray(
-                                                 app, 
-                                                 value,
-                                                 grayscale_value_label,
-                                                 edit.grayscale),
+                                     command=lambda value: edit.grayscale_threshold(
+                                        app,
+                                        value),
                                      fg_color="#AAAAAA",
                                      progress_color="#732828",
                                      button_color="#ff5353",
@@ -295,28 +305,28 @@ def reshape_sidebar(app):
 
     rotate_r = ctk.CTkButton(app.sidebar_upper, 
                              text="Rotate Right     ⟳",
-                             command=edit.rotate_right,
+                             command=lambda:edit.rotate_right(app),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     rotate_r.pack(padx=20, pady=5, fill="x")
 
     rotate_l = ctk.CTkButton(app.sidebar_upper, 
                              text="Rotate Left     ⟲",
-                             command=edit.rotate_left,
+                             command=lambda:edit.rotate_left(app),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     rotate_l.pack(padx=20, pady=5, fill="x")
 
     flip_horizontal = ctk.CTkButton(app.sidebar_upper, 
                              text="Flip Horizontal    ⇋",
-                             command=edit.flip_horizontal,
+                             command=lambda:edit.flip_horizontal(app),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     flip_horizontal.pack(padx=20, pady=5, fill="x")
 
     flip_vertical = ctk.CTkButton(app.sidebar_upper, 
                              text="Flip Vertical     ⇅",
-                             command=edit.flip_vertical,
+                             command=lambda:edit.flip_vertical(app),
                              fg_color="#ff5353",
                              hover_color="#b33a3a")
     flip_vertical.pack(padx=20, pady=5, fill="x")

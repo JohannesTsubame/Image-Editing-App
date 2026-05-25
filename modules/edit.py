@@ -122,7 +122,8 @@ def render_effects(app):
 
     if resize is not None:
         image = image.resize(resize)
-        crop = app.effects["crop"]
+    
+    crop = app.effects["crop"]
 
     if crop is not None:
         image = image.crop(crop)
@@ -151,11 +152,15 @@ def contrast(app, value):
     render_effects(app)
 
 
-def grayscale(app, threshold=128):
-    app.effects["grayscale"] = True
-    app.effects["grayscale_threshold"] = threshold
+def grayscale(app, enabled):
+    app.effects["grayscale"] = enabled
     render_effects(app)
 
+def grayscale_threshold(app, value):
+    app.effects["grayscale_threshold"] = int(value)
+
+    if app.effects["grayscale"]:
+        render_effects(app)
 
 def remove_grayscale(app):
     app.effects["grayscale"] = False
