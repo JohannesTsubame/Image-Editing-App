@@ -36,10 +36,23 @@ class ImageApp:
         top_frame.pack(fill="x", pady=10)
 
         self.label = ctk.CTkLabel(top_frame,
-                                  text="Editing App",
+                                  text="Editing App Kelompok 10",
                                   fg_color="transparent",
                                   font=("Inter", 40, "bold"))
         self.label.pack(side="left", padx=15)
+
+        team = {"Junaidi" : 3865,
+                "Azizi" : 3874,
+                "Pratama" : 3748,
+                "Jonathan" : 3844,}
+
+        for name, nim in team.items():
+            self.kelompok = ctk.CTkLabel(
+                top_frame,
+                text=f"{name} ({nim})",
+                font=("Inter", 20)
+            )
+            self.kelompok.pack(side="right", padx=10)
 
     def file_action(self, choice):
         self.file_menu.set("🗀 File")
@@ -118,11 +131,12 @@ class ImageApp:
                           "Enhance",
                           "Smooth"]
 
-        buttons = [("↩ Undo", edit.undo),
-                   ("↪ Redo", edit.redo),
-                   ("⟳ Reset", edit.reset),
+        buttons = [("⊕ Zoom In", edit.zoom_in),
                    ("⊖ Zoom Out", edit.zoom_out),
-                   ("⊕ Zoom In", edit.zoom_in),]
+                   ("⟳ Reset", edit.reset),
+                   ("↪ Redo", edit.redo),
+                   ("↩ Undo", edit.undo),
+                   ]
 
         for btn, command in buttons:
             if btn == "⟳ Reset":
@@ -139,7 +153,7 @@ class ImageApp:
                                         hover_color="#bababa",
                                         height=20,
                                         width=70,)
-            self.button.pack(side="left", pady=3, padx=5)
+            self.button.pack(side="right", pady=3, padx=5)
     
     def create_layout(self, root):
         self.content_frame = ctk.CTkFrame(self.root,
@@ -192,20 +206,20 @@ class ImageApp:
         self.sidebar_upper = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent")
         self.sidebar_upper.pack(fill="both", expand=True)
 
-        #Bottom Part
-        self.sidebar_bottom = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent", height=70)
-        self.sidebar_bottom.pack(side="bottom", fill="x")
-        self.sidebar_bottom.pack_propagate(False)
+        # #Bottom Part
+        # self.sidebar_bottom = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent", height=70)
+        # self.sidebar_bottom.pack(side="bottom", fill="x")
+        # self.sidebar_bottom.pack_propagate(False)
 
-        self.apply_btn = ctk.CTkButton(self.sidebar_bottom, 
-                                       text="Apply",
-                                       fg_color="#ff5353",
-                                       hover_color="#b33a3a",
-                                       font=("Inter", 20, "bold"),
-                                       height=40,
-                                       width=200,
-                                       corner_radius=20)
-        self.apply_btn.pack(pady=10)
+        # self.apply_btn = ctk.CTkButton(self.sidebar_bottom, 
+        #                                text="Apply",
+        #                                fg_color="#ff5353",
+        #                                hover_color="#b33a3a",
+        #                                font=("Inter", 20, "bold"),
+        #                                height=40,
+        #                                width=200,
+        #                                corner_radius=20)
+        # self.apply_btn.pack(pady=10)
 
 if __name__ == "__main__":
     root = ctk.CTk()
